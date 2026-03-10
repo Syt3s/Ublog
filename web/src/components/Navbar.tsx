@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
-import { User, FileText, LogOut } from 'lucide-react';
+import { User, FileText, LogOut, Cpu } from 'lucide-react';
 import { tokenStorage } from '../lib/token';
 
 export default function Navbar() {
@@ -23,6 +23,15 @@ export default function Navbar() {
           
           {isAuthenticated ? (
             <div className="flex items-center gap-4">
+              <Link
+                to="/ai-news"
+                className={`flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 ${
+                  location.pathname === '/ai-news' ? 'bg-gray-100' : ''
+                }`}
+              >
+                <Cpu className="h-4 w-4" />
+                <span>AI资讯</span>
+              </Link>
               <Link
                 to="/"
                 className={`flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 ${
@@ -53,6 +62,15 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="flex items-center gap-2">
+              <Link
+                to="/ai-news"
+                className={`flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 ${
+                  location.pathname === '/ai-news' ? 'bg-gray-100' : ''
+                }`}
+              >
+                <Cpu className="h-4 w-4" />
+                <span>AI资讯</span>
+              </Link>
               <Button variant="ghost" onClick={() => navigate('/login')}>
                 登录
               </Button>

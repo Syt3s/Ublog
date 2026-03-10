@@ -5,7 +5,7 @@
 // version of this repository is https://github.com/onexstack/onex.
 
 // MiniBlog API 定义，包含健康检查、用户管理和文章管理的 RPC 接口
-syntax = "proto3"; // 告诉编译器此文件使用什么版本的语法
+syntax = "proto3";
 
 package v1;
 
@@ -19,61 +19,45 @@ import "apiserver/v1/healthz.proto";
 import "apiserver/v1/post.proto";
 // 定义当前服务所依赖的用户消息
 import "apiserver/v1/user.proto";
+import "apiserver/v1/ai_news.proto";
 // 为生成 OpenAPI 文档提供相关注释（如标题、版本、作者、许可证等信息）
 import "protoc-gen-openapiv2/options/annotations.proto";
 
-// 指定协议缓冲区文件生成的 Go 代码所在的包路径
-// 包路径为：github.com/onexstack/miniblog/pkg/api/apiserver/v1, 别名为：v1
 option go_package = "github.com/onexstack/miniblog/pkg/api/apiserver/v1;v1";
 
-// OpenAPI 全局配置，提供详细配置信息，用于生成 OpenAPI 文档
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
-        // API名称
         title: "miniblog API";
-        // API版本
         version: "1.0";
-        // API 描述
         description: "";
-        // 开发者的联系方式，包括项目名称、网址和电子邮件
         contact: {
             name: "小而美的博客项目";
             url: "https://github.com/onexstack/miniblog";
             email: "colin404@foxmail.com";
         };
-        // 可信息和链接（这里使用 MIT License）
         license: {
             name: "MIT License";
             url: "https://github.com/onexstack/miniblog/blob/master/LICENSE";
         };
     };
-    //  指定访问协议为 HTTPS
     schemes: HTTPS;
-    // 定义了服务的请求和响应的数据格式为 application/json
     consumes: "application/json";
     produces: "application/json";
 };
 
-// MiniBlog 定义了一个 MiniBlog RPC 服务
 service MiniBlog {
-    // Healthz 健康检查
     rpc Healthz(google.protobuf.Empty) returns (HealthzResponse) {
-        // 通过 google.api.http 注释，指定 HTTP 方法为 GET、URL路径为 /healthz
         option (google.api.http) = {
             get: "/healthz",
         };
 
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            // 在 OpenAPI 文档中的接口简要描述，为“服务健康检查”
             summary: "服务健康检查";
-            // 标识该操作的唯一ID，为“Healthz”
             operation_id: "Healthz";
-            // 将该接口归类为“服务治理”
             tags: "服务治理";
         };
     }
 
-    // Login 用户登录
     rpc Login(LoginRequest) returns (LoginResponse) {
         option (google.api.http) = {
             post: "/login",
@@ -88,7 +72,6 @@ service MiniBlog {
         };
     }
 
-    // RefreshToken 刷新令牌
     rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse) {
         option (google.api.http) = {
           put: "/refresh-token",
@@ -103,8 +86,6 @@ service MiniBlog {
         };
     }
 
-
-    // ChangePassword 修改密码
     rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {
         option (google.api.http) = {
             put: "/v1/users/{userID}/change-password",
@@ -118,7 +99,6 @@ service MiniBlog {
         };
     }
 
-    // CreateUser 创建用户
     rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
         option (google.api.http) = {
             post: "/v1/users",
@@ -132,7 +112,6 @@ service MiniBlog {
         };
     }
 
-    // UpdateUser 更新用户信息
     rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
         option (google.api.http) = {
             put: "/v1/users/{userID}",
@@ -146,7 +125,6 @@ service MiniBlog {
         };
     }
 
-    // DeleteUser 删除用户
     rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
         option (google.api.http) = {
             delete: "/v1/users/{userID}",
@@ -159,7 +137,6 @@ service MiniBlog {
         };
     }
 
-    // GetUser 获取用户信息
     rpc GetUser(GetUserRequest) returns (GetUserResponse) {
         option (google.api.http) = {
             get: "/v1/users/{userID}",
@@ -172,7 +149,6 @@ service MiniBlog {
         };
     }
 
-    // ListUser 列出所有用户
     rpc ListUser(ListUserRequest) returns (ListUserResponse) {
         option (google.api.http) = {
             get: "/v1/users",
@@ -185,7 +161,6 @@ service MiniBlog {
         };
     }
 
-    // CreatePost 创建文章
     rpc CreatePost(CreatePostRequest) returns (CreatePostResponse) {
         option (google.api.http) = {
             post: "/v1/posts",
@@ -199,29 +174,19 @@ service MiniBlog {
         };
     }
 
-    // UpdatePost 更新文章
     rpc UpdatePost(UpdatePostRequest) returns (UpdatePostResponse) {
-        // 将 UpdatePost 映射为 HTTP PUT 请求，并通过 URL /v1/posts/{postID} 访问
-        // {postID} 是一个路径参数，grpc-gateway 会根据 postID 名称，将其解析并映射到
-        // UpdatePostRequest 类型中相应的字段.
-        // body: "*" 表示请求体中的所有字段都会映射到 UpdatePostRequest 类型。
         option (google.api.http) = {
             put: "/v1/posts/{postID}",
             body: "*",
         };
 
-        // 提供用于生成 OpenAPI 文档的注解
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            // 在文档中简要描述此操作的功能：更新文章。
             summary: "更新文章";
-            // 为此操作指定唯一标识符（UpdatePost），便于跟踪
             operation_id: "UpdatePost";
-            // 将此操作归类到 "博客管理" 标签组，方便在 OpenAPI 文档中组织接口分组
             tags: "博客管理";
         };
     }
 
-    // DeletePost 删除文章
     rpc DeletePost(DeletePostRequest) returns (DeletePostResponse) {
         option (google.api.http) = {
             delete: "/v1/posts",
@@ -235,7 +200,6 @@ service MiniBlog {
         };
     }
 
-    // GetPost 获取文章信息
     rpc GetPost(GetPostRequest) returns (GetPostResponse) {
         option (google.api.http) = {
             get: "/v1/posts/{postID}",
@@ -248,7 +212,6 @@ service MiniBlog {
         };
     }
 
-    // ListPost 列出所有文章
     rpc ListPost(ListPostRequest) returns (ListPostResponse) {
         option (google.api.http) = {
             get: "/v1/posts",
@@ -258,6 +221,43 @@ service MiniBlog {
             summary: "列出所有文章";
             operation_id: "ListPost";
             tags: "博客管理";
+        };
+    }
+
+    rpc ListAINews(ListAINewsRequest) returns (ListAINewsResponse) {
+        option (google.api.http) = {
+            get: "/v1/ai-news",
+        };
+
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "列出AI资讯";
+            operation_id: "ListAINews";
+            tags: "AI资讯管理";
+        };
+    }
+
+    rpc GetAINews(GetAINewsRequest) returns (GetAINewsResponse) {
+        option (google.api.http) = {
+            get: "/v1/ai-news/{id}",
+        };
+
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "获取AI资讯详情";
+            operation_id: "GetAINews";
+            tags: "AI资讯管理";
+        };
+    }
+
+    rpc RefreshAINews(RefreshAINewsRequest) returns (RefreshAINewsResponse) {
+        option (google.api.http) = {
+            post: "/v1/ai-news/refresh",
+            body: "*",
+        };
+
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "刷新AI资讯";
+            operation_id: "RefreshAINews";
+            tags: "AI资讯管理";
         };
     }
 }

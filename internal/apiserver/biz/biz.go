@@ -6,17 +6,13 @@
 
 package biz
 
-//go:generate mockgen -destination mock_biz.go -package biz github.com/onexstack/miniblog/internal/apiserver/biz IBiz
-
 import (
 	"github.com/google/wire"
 	"github.com/onexstack/onexstack/pkg/authz"
 
+	ainewsv1 "github.com/onexstack/miniblog/internal/apiserver/biz/v1/ai_news"
 	postv1 "github.com/onexstack/miniblog/internal/apiserver/biz/v1/post"
 	userv1 "github.com/onexstack/miniblog/internal/apiserver/biz/v1/user"
-
-	// Post V2 版本（未实现，仅展示用）
-	// postv2 "github.com/onexstack/miniblog/internal/apiserver/biz/v2/post".
 	"github.com/onexstack/miniblog/internal/apiserver/store"
 )
 
@@ -28,12 +24,9 @@ var ProviderSet = wire.NewSet(NewBiz, wire.Bind(new(IBiz), new(*biz)))
 
 // IBiz 定义了业务层需要实现的方法.
 type IBiz interface {
-	// UserV1 获取用户业务接口.
 	UserV1() userv1.UserBiz
-	// PostV1 获取帖子业务接口.
 	PostV1() postv1.PostBiz
-	// PostV2 获取帖子业务接口（V2 版本）.
-	// PostV2() post.PostBiz
+	AINewsV1() ainewsv1.AINewsBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -58,4 +51,8 @@ func (b *biz) UserV1() userv1.UserBiz {
 // PostV1 返回一个实现了 PostBiz 接口的实例.
 func (b *biz) PostV1() postv1.PostBiz {
 	return postv1.New(b.store)
+}
+
+func (b *biz) AINewsV1() ainewsv1.AINewsBiz {
+	return ainewsv1.New(b.store)
 }

@@ -87,6 +87,14 @@ func (c *ServerConfig) InstallRESTAPI(engine *gin.Engine) {
 			postv1.GET(":postID", handler.GetPost)    // 查询博客详情
 			postv1.GET("", handler.ListPost)          // 查询博客列表
 		}
+
+		// AI资讯相关路由（公开访问，不需要认证）
+		aiNewsV1 := v1.Group("/ai-news")
+		{
+			aiNewsV1.GET("", handler.ListAINews)             // 查询AI资讯列表
+			aiNewsV1.GET(":id", handler.GetAINews)           // 获取AI资讯详情
+			aiNewsV1.POST("/refresh", handler.RefreshAINews) // 刷新AI资讯
+		}
 	}
 }
 

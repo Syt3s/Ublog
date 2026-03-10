@@ -130,3 +130,41 @@ export const postService = {
     await apiClient.delete('/v1/posts', { data: { postIDs } });
   },
 };
+
+export interface AINews {
+  id: string;
+  title: string;
+  summary: string;
+  contentUrl: string;
+  sourcePlatform: string;
+  sourceAuthor: string;
+  publishedAt: string;
+  fetchedAt: string;
+  tags: string[];
+  viewCount: number;
+}
+
+export const aiNewsService = {
+  listAINews: async (offset?: number, limit?: number, sourcePlatform?: string): Promise<{ newsList: AINews[]; totalCount: string }> => {
+    const params: any = {};
+    if (offset !== undefined) params.offset = offset;
+    if (limit !== undefined) params.limit = limit;
+    if (sourcePlatform !== undefined) params.source_platform = sourcePlatform;
+    
+    const response = await apiClient.get<any>('/v1/ai-news', { params });
+    return {
+      newsList: response.data.news_list || [],
+      totalCount: response.data.total_count || '0',
+    };
+  },
+
+  getAINews: async (id: string): Promise<AINews> => {
+    const response = await apiClient.get<{ news: AINews }>(`/v1/ai-news/${id}`);
+    return response.data.news;
+  },
+
+  refreshAINews: async (platforms?: string[]): Promise<{ message: string }> => {
+    const response = await apiClient.post<{ message: string }>('/v1/ai-news/refresh', { platforms });
+    return response.data;
+  },
+};

@@ -7,6 +7,7 @@ import PostDetail from './pages/PostDetail';
 import CreatePost from './pages/CreatePost';
 import EditPost from './pages/EditPost';
 import Profile from './pages/Profile';
+import AINews from './pages/AINews';
 import { tokenStorage } from './lib/token';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -24,6 +25,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/ai-news" element={<AINews />} />
           <Route path="/" element={
             <ProtectedRoute>
               <PostList />
